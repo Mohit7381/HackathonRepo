@@ -16,7 +16,7 @@ export default function HomePage() {
       case "chat":
         return <ChatInterface onBack={() => setCurrentView("home")} />
       case "reports":
-        return <ReportsView onBack={() => setCurrentView("home")} />
+        return <ReportsView userId={"user69"} onBack={() => setCurrentView("home")} />
       case "meal-plan":
         return <MealPlanView onBack={() => setCurrentView("home")} />
       default:
@@ -59,7 +59,7 @@ export default function HomePage() {
               </div>
 
               {/* Feature Cards */}
-              <div className="grid md:grid-cols-3 gap-6 mb-12">
+              <div className="grid md:grid-cols-2 gap-6 mb-12">
                 <Card
                   className="border-red-100 hover:border-red-200 transition-colors cursor-pointer hover:shadow-lg"
                   onClick={() => setCurrentView("chat")}
@@ -84,11 +84,11 @@ export default function HomePage() {
                       <BarChart3 className="h-6 w-6 text-red-600" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Smart Reports</h3>
-                    <p className="text-gray-600">Generate weekly and monthly nutrition reports automatically</p>
+                    <p className="text-gray-600">Generate Daily nutrition reports automatically</p>
                   </CardContent>
                 </Card>
 
-                <Card
+                {/* <Card
                   className="border-red-100 hover:border-red-200 transition-colors cursor-pointer hover:shadow-lg"
                   onClick={() => setCurrentView("meal-plan")}
                 >
@@ -99,13 +99,13 @@ export default function HomePage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Meal Planning</h3>
                     <p className="text-gray-600">Get personalized breakfast, lunch, and dinner recommendations</p>
                   </CardContent>
-                </Card>
+                </Card> */}
               </div>
 
               {/* Quick Actions */}
               <div className="bg-white rounded-2xl shadow-lg p-8 border border-red-100">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Quick Actions</h3>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-1 gap-4">
                   <Button
                     onClick={() => setCurrentView("reports")}
                     variant="outline"
@@ -114,14 +114,14 @@ export default function HomePage() {
                     <BarChart3 className="h-8 w-8" />
                     <span className="text-lg">View Reports</span>
                   </Button>
-                  <Button
+                  {/* <Button
                     onClick={() => setCurrentView("meal-plan")}
                     variant="outline"
                     className="border-red-200 text-red-600 hover:bg-red-50 p-6 h-auto flex-col space-y-2"
                   >
                     <Utensils className="h-8 w-8" />
                     <span className="text-lg">Plan Meals</span>
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </main>

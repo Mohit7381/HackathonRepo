@@ -1,52 +1,45 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Download, Calendar, TrendingUp, Target } from "lucide-react"
 
 interface ReportsViewProps {
-  onBack: () => void
+  onBack: () => void,
+  userId: String
 }
 
-export default function ReportsView({ onBack }: ReportsViewProps) {
+export default function ReportsView({ onBack, userId }: ReportsViewProps) {
   const [reportType, setReportType] = useState<"weekly" | "monthly">("weekly")
+  const [weeklyData, setWeeklyData] = useState<any | null>(null)
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    const fetchWeeklyData = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`http://localhost:8000/generate-daily-report/${userId}`)
+        const json = await res.json()
+        if (json.weekly_summary) {
+          setWeeklyData(json.weekly_summary)
+        } else {
+          console.error("Unexpected response:", json)
+        }
+      } catch (error) {
+        console.error("Error fetching weekly report:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const weeklyData = {
-    totalCalories: 14530,
-    avgCalories: 2071,
-    protein: 420,
-    carbs: 1800,
-    fat: 580,
-    meals: 21,
-    goals: {
-      calories: 85,
-      protein: 92,
-      carbs: 50,
-      fat: 88,
-    },
-  }
+    fetchWeeklyData()
+  },[userId])
 
-  const monthlyData = {
-    totalCalories: 62000,
-    avgCalories: 2000,
-    protein: 1800,
-    carbs: 7800,
-    fat: 2400,
-    meals: 90,
-    goals: {
-      calories: 88,
-      protein: 50,
-      carbs: 82,
-      fat: 90,
-    },
-  }
-
-  const currentData = reportType === "weekly" ? weeklyData : monthlyData
+  const currentData = weeklyData 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white">\
+        <div className="min-h-screen bg-gradient-to-br from-red-50 to-white">
       <header className="bg-white shadow-sm border-b border-red-100">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -61,30 +54,25 @@ export default function ReportsView({ onBack }: ReportsViewProps) {
               <h1 className="text-lg font-bold text-red-600">Nutrition Reports</h1>
             </div>
           </div>
-          <Button className="bg-red-600 hover:bg-red-700">
-            <Download className="h-4 w-4 mr-2" />
-            Export Report
-          </Button>
         </div>
       </header>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
         <Tabs value={reportType} onValueChange={(value) => setReportType(value as "weekly" | "monthly")}>
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-1 mb-8">
             <TabsTrigger value="weekly" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
-              Weekly Report
-            </TabsTrigger>
-            <TabsTrigger value="monthly" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
-              Monthly Report
+              Daily Report
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="weekly" className="space-y-6">
-            <ReportContent data={currentData} period="This Week" />
-          </TabsContent>
-
-          <TabsContent value="monthly" className="space-y-6">
-            <ReportContent data={currentData} period="This Month" />
+            {loading ? (
+              <p className="text-center text-red-600 font-semibold">Loading report...</p>
+            ) : currentData ? (
+              <ReportContent data={currentData} period="Daily Report" />
+            ) : (
+              <p className="text-center text-red-600 font-semibold">No report available.</p>
+            )}
           </TabsContent>
         </Tabs>
       </div>
